@@ -139,6 +139,7 @@ function createCollider(gameObjects) {
     scoreText,
     bombs,
   } = gameObjects;
+
   const collectStar = (player, star) => {
     star.disableBody(true, true);
 
@@ -162,7 +163,6 @@ function createCollider(gameObjects) {
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(stars, platforms);
   this.physics.add.overlap(player, stars, collectStar, null, this);
-
 }
 
 function createCursors(player) {
