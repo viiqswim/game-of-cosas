@@ -69,6 +69,7 @@ function createPlayer() {
 
   player.setBounce(0.2);
   player.setCollideWorldBounds(true);
+  player.setScale(0.75, 0.75);
 
   this.anims.create({
     key: 'left',
