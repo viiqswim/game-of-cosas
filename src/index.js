@@ -1,27 +1,19 @@
-import "./styles.css";
+import "./styles/index.css";
 import Phaser from "phaser";
 
-import Boot from "./Boot.js";
-import Play from "./Play.js";
+import Boot from "./scenes/Boot.js";
+import Play from "./scenes/Play.js";
 
 const config = {
   type: Phaser.AUTO,
-  scale: {
-    parent: "game-container",
-    zoom: 1,
-    width: 640,
-    height: 480,
-    autoCenter: Phaser.DOM.CENTER_BOTH,
-    mode: Phaser.Scale.NONE
-  },
-  backgroundColor: 0x444444,
-  pixelArt: true,
+  width: 800,
+  height: 600,
   physics: {
-    default: "arcade",
-    arcade: {
-      debug: false,
-      gravity: { y: 200 }
-    }
+      default: 'arcade',
+      arcade: {
+          gravity: { y: 300 },
+          debug: false
+      }
   },
   scene: [Boot, Play]
 };
