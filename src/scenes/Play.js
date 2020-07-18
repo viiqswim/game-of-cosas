@@ -38,7 +38,14 @@ class Play extends Phaser.Scene {
       scoreText: this.scoreText,
     }
 
-    createCollider.apply(this, [gameObjects]);
+    this.bombs = createBombs.apply(this, [{
+      ...gameObjects,
+      bombs: this.bombs,
+    }]);
+    createCollider.apply(this, [{
+      ...gameObjects,
+      bombs: this.bombs,
+    }]);
   }
 
   update(time, delta) {
@@ -92,17 +99,64 @@ function createScoreText() {
   return scoreText;
 }
 
+function createBombs(gameObjects) {
+  const {
+    player,
+    platforms,
+  } = gameObjects;
+  const bombs = this.physics.add.group();
+  const hitBomb = (player, bomb) => {
+    this.physics.pause();
+    player.setTint(0xff0000);
+    player.anims.play('turn');
+
+    restartGame.apply(this);
+  };
+
+  this.physics.add.collider(bombs, platforms);
+  this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+  return bombs;
+}
+
+function restartGame() {
+  var red = Phaser.Math.Between(50, 255);
+  var green = Phaser.Math.Between(50, 255);
+  var blue = Phaser.Math.Between(50, 255);
+
+  this.cameras.main.on('camerafadeoutcomplete', function () {
+    this.scene.restart();
+  }, this);
+
+  this.cameras.main.fade(2000, red, green, blue);
+}
+
 function createCollider(gameObjects) {
   const {
     player,
     platforms,
     stars,
     scoreText,
+    bombs,
   } = gameObjects;
   const collectStar = (player, star) => {
-      star.disableBody(true, true);
-      score += 10;
-      scoreText.setText('Score: ' + score);
+    star.disableBody(true, true);
+
+    score += 10;
+    scoreText.setText('Score: ' + score);
+
+    if (stars.countActive(true) === 0) {
+      stars.children.iterate(function (child) {
+        child.enableBody(true, child.x, 0, true, true);
+      });
+
+    }
+
+    const x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+    const bomb = bombs.create(x, 16, 'bomb');
+    bomb.setBounce(1);
+    bomb.setCollideWorldBounds(true);
+    bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
   };
 
   this.physics.add.collider(player, platforms);
